@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Payment Gateway</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .payment-type-group {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">PayGate Admin</div>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="admin.html" class="active">Admin</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="margin: 2rem 0;">Admin Dashboard</h1>
+
+        <div class="dashboard-grid">
+            <!-- Payment Configuration -->
+            <div class="card">
+                <h3>Payment Configuration</h3>
+                <form id="paymentConfigForm" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label for="minAmount">Minimum Payment Amount</label>
+                        <input type="number" id="minAmount" name="minAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxAmount">Maximum Payment Amount</label>
+                        <input type="number" id="maxAmount" name="maxAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Types Configuration</label>
+                        <div class="payment-type-group">
+                            <label>Credit Card</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="creditCard" value="yes"> Yes</label>
+                                <label><input type="radio" name="creditCard" value="no"> No</label>
+                            </div>
+                        </div>
+                        <div class="payment-type-group">
+                            <label>Debit Card</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="debitCard" value="yes"> Yes</label>
+                                <label><input type="radio" name="debitCard" value="no"> No</label>
+                            </div>
+                        </div>
+                        <div class="payment-type-group">
+                            <label>Bank Transfer</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="bankTransfer" value="yes"> Yes</label>
+                                <label><input type="radio" name="bankTransfer" value="no"> No</label>
+                            </div>
+                        </div>
+                        <div class="payment-type-group">
+                            <label>PayPal</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="paypal" value="yes"> Yes</label>
+                                <label><input type="radio" name="paypal" value="no"> No</label>
+                            </div>
+                        </div>
+                        <div class="payment-type-group">
+                            <label>Google Pay</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="googlePay" value="yes"> Yes</label>
+                                <label><input type="radio" name="googlePay" value="no"> No</label>
+                            </div>
+                        </div>
+                        <div class="payment-type-group">
+                            <label>Apple Pay</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="applePay" value="yes"> Yes</label>
+                                <label><input type="radio" name="applePay" value="no"> No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Configuration</button>
+                </form>
+            </div>
+
+            <!-- System Stats -->
+            <div class="card">
+                <h3>System Statistics</h3>
+                <div style="margin-top: 1rem;">
+                    <p>Total Transactions: <span id="totalTransactions">0</span></p>
+                    <p>Total Volume: <span id="totalVolume">$0.00</span></p>
+                    <p>Active Users: <span id="activeUsers">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Management -->
+        <div class="card" style="margin-top: 2rem;">
+            <h3>Transaction Management</h3>
+            <div class="search-container">
+                <input type="text" id="searchTransaction" placeholder="Search transactions..." class="search-input">
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTable">
+                    <!-- Transactions will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html> 

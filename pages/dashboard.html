@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Payment Gateway</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .status-completed {
+            color: var(--success-color);
+            background-color: #dcfce7;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+
+        .status-pending {
+            color: #ca8a04;
+            background-color: #fef9c3;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method-card {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-method-card:hover {
+            border-color: var(--primary-color);
+        }
+
+        .payment-method-card.selected {
+            border-color: var(--primary-color);
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">PayGate</div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="payments.html">Payments</a>
+                <a href="settings.html">Settings</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0;">
+            <h1>Dashboard</h1>
+            <button class="btn btn-primary" onclick="document.getElementById('paymentModal').style.display='block'">
+                New Payment
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card stat-card">
+                <div class="stat-value" id="balance">$1,000.00</div>
+                <div class="stat-label">Available Balance</div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-value" id="totalTransactions">24</div>
+                <div class="stat-label">Total Transactions</div>
+            </div>
+            <div class="card stat-card">
+                <div class="stat-value" id="pendingTransactions">2</div>
+                <div class="stat-label">Pending Transactions</div>
+            </div>
+        </div>
+
+        <!-- Quick Payment Card -->
+        <div class="card">
+            <h3>Quick Payment</h3>
+            <form id="paymentForm" style="margin-top: 1rem;">
+                <div class="payment-methods">
+                    <div class="payment-method-card selected" onclick="selectPaymentMethod(this, 'credit')">
+                        <h4>Credit Card</h4>
+                        <p>Pay with credit card</p>
+                    </div>
+                    <div class="payment-method-card" onclick="selectPaymentMethod(this, 'debit')">
+                        <h4>Debit Card</h4>
+                        <p>Pay with debit card</p>
+                    </div>
+                    <div class="payment-method-card" onclick="selectPaymentMethod(this, 'bank')">
+                        <h4>Bank Transfer</h4>
+                        <p>Pay via bank transfer</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" name="amount" min="1" required>
+                </div>
+                <input type="hidden" id="paymentType" name="paymentType" value="credit">
+                <button type="submit" class="btn btn-primary">Make Payment</button>
+            </form>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="card" style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3>Recent Transactions</h3>
+                <div class="search-container" style="max-width: 300px;">
+                    <input type="text" id="searchTransaction" placeholder="Search transactions..." class="search-input">
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTable">
+                    <!-- Transactions will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/payments.js"></script>
+    <script>
+        function selectPaymentMethod(element, type) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            element.classList.add('selected');
+            
+            // Update hidden input
+            document.getElementById('paymentType').value = type;
+        }
+
+        // Initialize transaction table with some data
+        document.addEventListener('DOMContentLoaded', () => {
+            const sampleTransactions = [
+                { date: '2024-03-21', type: 'credit', amount: 250.00, status: 'completed' },
+                { date: '2024-03-20', type: 'debit', amount: 75.50, status: 'completed' },
+                { date: '2024-03-19', type: 'bank', amount: 500.00, status: 'pending' }
+            ];
+
+            const transactionTable = document.getElementById('transactionTable');
+            transactionTable.innerHTML = sampleTransactions.map(transaction => `
+                <tr>
+                    <td>${formatDate(transaction.date)}</td>
+                    <td>${transaction.type}</td>
+                    <td>$${transaction.amount.toFixed(2)}</td>
+                    <td><span class="status-${transaction.status}">${transaction.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewTransactionDetails('${transaction.date}')">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        });
+
+        function viewTransactionDetails(date) {
+            alert(`Viewing transaction details for ${date}`);
+        }
+    </script>
+</body>
+</html> 

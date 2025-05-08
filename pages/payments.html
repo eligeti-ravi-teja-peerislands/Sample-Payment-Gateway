@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Payment Gateway</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .payment-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            flex: 1;
+        }
+
+        .date-range {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .status-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .status-completed {
+            color: var(--success-color);
+            background-color: #dcfce7;
+        }
+
+        .status-pending {
+            color: #ca8a04;
+            background-color: #fef9c3;
+        }
+
+        .status-failed {
+            color: var(--error-color);
+            background-color: #fee2e2;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">PayGate</div>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="payments.html" class="active">Payments</a>
+                <a href="settings.html">Settings</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0;">
+            <h1>Payments</h1>
+            <button class="btn btn-primary" onclick="document.getElementById('paymentModal').style.display='block'">
+                New Payment
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="payment-filters">
+                <div class="filter-group">
+                    <label>Date Range</label>
+                    <div class="date-range">
+                        <input type="date" class="form-group input" id="startDate">
+                        <input type="date" class="form-group input" id="endDate">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <div class="status-filter">
+                        <span class="status-badge status-completed" onclick="filterByStatus('completed')">Completed</span>
+                        <span class="status-badge status-pending" onclick="filterByStatus('pending')">Pending</span>
+                        <span class="status-badge status-failed" onclick="filterByStatus('failed')">Failed</span>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input type="text" class="search-input" placeholder="Search transactions...">
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Reference</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentsTable">
+                    <!-- Payments will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        // Sample payments data
+        const payments = [
+            { date: '2024-03-21', reference: 'PAY-001', type: 'credit', amount: 250.00, status: 'completed' },
+            { date: '2024-03-20', reference: 'PAY-002', type: 'debit', amount: 75.50, status: 'completed' },
+            { date: '2024-03-19', reference: 'PAY-003', type: 'bank', amount: 500.00, status: 'pending' },
+            { date: '2024-03-18', reference: 'PAY-004', type: 'credit', amount: 100.00, status: 'failed' }
+        ];
+
+        function renderPayments(filteredPayments = payments) {
+            const paymentsTable = document.getElementById('paymentsTable');
+            paymentsTable.innerHTML = filteredPayments.map(payment => `
+                <tr>
+                    <td>${formatDate(payment.date)}</td>
+                    <td>${payment.reference}</td>
+                    <td>${payment.type}</td>
+                    <td>$${payment.amount.toFixed(2)}</td>
+                    <td><span class="status-badge status-${payment.status}">${payment.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewPaymentDetails('${payment.reference}')">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterByStatus(status) {
+            const filtered = payments.filter(payment => payment.status === status);
+            renderPayments(filtered);
+        }
+
+        function viewPaymentDetails(reference) {
+            alert(`Viewing payment details for ${reference}`);
+        }
+
+        // Format date helper function
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Initialize payments table
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPayments();
+        });
+    </script>
+</body>
+</html> 

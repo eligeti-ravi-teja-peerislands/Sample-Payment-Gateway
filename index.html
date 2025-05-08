@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayGate - Payment Gateway Solution</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(to right, #2563eb11, #1e40af11);
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">PayGate</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="pages/login.html" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome to PayGate</h1>
+            <p>Your Secure Payment Gateway Solution</p>
+            <div class="cta-buttons">
+                <a href="pages/login.html" class="btn btn-primary">Get Started</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+
+        <div id="features" class="features">
+            <div class="feature-card card">
+                <h3>Secure Payments</h3>
+                <p>Process payments securely with multiple payment options including credit cards, debit cards, and bank transfers.</p>
+            </div>
+
+            <div class="feature-card card">
+                <h3>Easy Management</h3>
+                <p>Track transactions, manage payment configurations, and view detailed analytics from your dashboard.</p>
+            </div>
+
+            <div class="feature-card card">
+                <h3>Admin Controls</h3>
+                <p>Powerful admin dashboard with complete control over payment settings and user management.</p>
+            </div>
+        </div>
+
+        <div class="card" style="text-align: center; margin: 3rem 0;">
+            <h2>Ready to Get Started?</h2>
+            <p style="margin: 1rem 0;">Create an account or login to access your dashboard</p>
+            <a href="pages/login.html" class="btn btn-primary">Login Now</a>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.role) {
+                window.location.href = user.role === 'admin' ? 'pages/admin.html' : 'pages/dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html> 
