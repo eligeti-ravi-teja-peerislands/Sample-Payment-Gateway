@@ -43,4 +43,4 @@ A simple payment gateway frontend project with user authentication, payment proc
 - HTML5
 - CSS3
 - JavaScript (ES6+)
-- LocalStorage for data persistence 
+- LocalStorage for data persistence
