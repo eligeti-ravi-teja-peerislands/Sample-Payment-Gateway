@@ -27,9 +27,16 @@ const systemStats = {
 
 // Payment configuration
 let paymentConfig = {
-    minAmount: 1,
+    minAmount: 10,
     maxAmount: 10000,
-    allowedTypes: ['credit', 'debit', 'bank']
+    paymentTypes: {
+        creditCard: 'yes',
+        debitCard: 'yes',
+        bankTransfer: 'yes',
+        paypal: 'yes',
+        googlePay: 'no',
+        applePay: 'no'
+    }
 };
 
 // Format date
@@ -77,13 +84,17 @@ const renderTransactions = (filteredTransactions = adminTransactions) => {
 
 // Load payment configuration
 const loadPaymentConfig = () => {
+    // Set min and max amounts
     document.getElementById('minAmount').value = paymentConfig.minAmount;
     document.getElementById('maxAmount').value = paymentConfig.maxAmount;
     
-    // Set checkboxes
-    document.getElementById('creditCard').checked = paymentConfig.allowedTypes.includes('credit');
-    document.getElementById('debitCard').checked = paymentConfig.allowedTypes.includes('debit');
-    document.getElementById('bankTransfer').checked = paymentConfig.allowedTypes.includes('bank');
+    // Set radio buttons for each payment type
+    Object.entries(paymentConfig.paymentTypes).forEach(([type, value]) => {
+        const radio = document.querySelector(`input[name="${type}"][value="${value}"]`);
+        if (radio) {
+            radio.checked = true;
+        }
+    });
 };
 
 // Handle payment configuration form submission
@@ -97,16 +108,20 @@ if (paymentConfigForm) {
         
         // Validate amounts
         if (minAmount >= maxAmount) {
-            showAlert('Minimum amount must be less than maximum amount');
+            alert('Minimum amount must be less than maximum amount');
             return;
         }
 
         // Get selected payment types
-        const allowedTypes = Array.from(document.querySelectorAll('input[name="paymentTypes"]:checked'))
-            .map(checkbox => checkbox.value);
+        const paymentTypes = {};
+        ['creditCard', 'debitCard', 'bankTransfer', 'paypal', 'googlePay', 'applePay'].forEach(type => {
+            const selectedOption = document.querySelector(`input[name="${type}"]:checked`);
+            paymentTypes[type] = selectedOption ? selectedOption.value : 'no';
+        });
 
-        if (allowedTypes.length === 0) {
-            showAlert('At least one payment type must be selected');
+        // Validate at least one payment type is enabled
+        if (!Object.values(paymentTypes).includes('yes')) {
+            alert('At least one payment type must be enabled');
             return;
         }
 
@@ -114,10 +129,12 @@ if (paymentConfigForm) {
         paymentConfig = {
             minAmount,
             maxAmount,
-            allowedTypes
+            paymentTypes
         };
 
-        showAlert('Payment configuration updated successfully', 'success');
+        // Save to localStorage
+        localStorage.setItem('paymentConfig', JSON.stringify(paymentConfig));
+        alert('Payment configuration updated successfully');
     });
 }
 
@@ -155,6 +172,12 @@ const viewTransaction = (transactionId) => {
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
+    // Load saved configuration if exists
+    const savedConfig = localStorage.getItem('paymentConfig');
+    if (savedConfig) {
+        paymentConfig = JSON.parse(savedConfig);
+    }
+
     // Check if user is admin
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user.role !== 'admin') {
